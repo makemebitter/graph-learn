@@ -68,7 +68,7 @@ class PyGDataLoader():
         beyond which values are discarded to ensure correct server state.
       multi_process (bool): Weather or not use multi-process dataloader
     """
-    def __init__(self, dataset, length=None, multi_process=False, **kwargs):
+    def __init__(self, dataset, length=None, multi_process=False, collate_fn=Collater(), **kwargs):
       assert isinstance(dataset, GLDataset), 'PyGDataLoader only accepts GraphLearn datasets'
 
       self._length = length
@@ -85,7 +85,7 @@ class PyGDataLoader():
         kwargs['num_workers'] = get_num_client()
         if not dataset.lazy_init():
           raise RuntimeError('PyGDataLoader needs a dataset with lazy init')
-      self._dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, collate_fn=Collater(), **kwargs)
+      self._dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, collate_fn=collate_fn, **kwargs)
       self._iterator = None
     
     def __iter__(self):
