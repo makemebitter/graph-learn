@@ -55,13 +55,13 @@ void Dataset::Close() {
 }
 
 GetDagValuesResponse* Dataset::Next(int32_t epoch) {
-  // Allowed lateness: 100s.
+  // Allowed lateness: 10h.
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-  ts.tv_sec += 100;
+  ts.tv_sec += 36000;
   if (sem_timedwait(&(occupied_[cursor_]), &ts) == -1) {
-    LOG(ERROR) << "Drop a batch of data because it's not ready in 100s.";
-    USER_LOG("Drop a batch of data because it's not ready in 100s.");
+    LOG(ERROR) << "Drop a batch of data because it's not ready in 10h.";
+    USER_LOG("Drop a batch of data because it's not ready in 10h.");
     PrefetchAsync();
     ++cursor_ %= cap_;
     return Next(epoch);
